@@ -74,3 +74,4 @@ wsServer.on('request', function(request) {
     }
   });
 });
+console.log('server listening on port 8000')
