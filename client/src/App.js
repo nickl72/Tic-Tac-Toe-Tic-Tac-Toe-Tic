@@ -21,18 +21,11 @@ class App extends Component {
       symbol: null,
       board: [],
       counter: 0,
-      turn: 'Nick'
+      turn: null
     };
   }
 
   componentWillMount() {
-    const board = []
-    for (let row= 1; row<= 25; row++) {
-      for (let col = 1; col<=25; col++) {
-          board.push({row, col, username: null, symbol: ''})
-      }
-    }
-    this.setState((state, props) => ({board}))
     client.onopen = () => {
       console.log('WebSocket Client Connected');
     };
@@ -41,6 +34,9 @@ class App extends Component {
       if (data.board) {
         this.setState((state, props) => ({board: data.board, turn: data.turn})
         )
+      }
+      if (data.turn) {
+        this.setState((state,props) => ({turn: data.turn.username}))
       }
       console.log(data)
       if (data.users) {
@@ -79,6 +75,10 @@ class App extends Component {
     }))
   }
 
+  startGame = (e) => {
+    e.preventDefault()
+    client.send(JSON.stringify({startGame: true}))
+  }
   render() {
     return (
       <div className="App">
@@ -86,7 +86,13 @@ class App extends Component {
         <main>
           {!this.state.username  && <SignIn updateUser={this.updateUser}/>}
           <Players players={this.state.currentUsers}/>
-          <Game boardClick={this.boardClick} {...this.state}/>
+          {this.state.turn ? 
+            <Game boardClick={this.boardClick} {...this.state}/>
+            :
+            <div>
+              <button onClick={this.startGame}>Start Game</button>
+            </div>
+          }
         </main>
         <Footer/>
       </div>
