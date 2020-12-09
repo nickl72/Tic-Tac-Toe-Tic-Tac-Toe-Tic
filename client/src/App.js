@@ -5,7 +5,8 @@ import './App.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Players from './components/Players';
-import Game from './components/Game'
+import Game from './components/Game';
+import SignIn from './components/SignIn';
 
 
 const client = new W3CWebSocket('ws://127.0.0.1:8000');
@@ -17,8 +18,10 @@ class App extends Component {
     this.state = {
       currentUsers: [],
       username: null,
+      symbol: null,
       board: [],
-      counter: 0
+      counter: 0,
+      turn: 'Nick'
     };
   }
 
@@ -36,15 +39,26 @@ class App extends Component {
     client.onmessage = (message) => {
       const data = JSON.parse(message.data)
       if (data.board) {
-        this.setState((state, props) => ({board: data.board})
+        this.setState((state, props) => ({board: data.board, turn: data.turn})
         )
+      }
+      console.log(data)
+      if (data.users) {
+        const currentUsers = []
+        Object.keys(data.users).map(key => {
+          currentUsers.push(data.users[key])
+        })
+        this.setState((state,props) => ({currentUsers}))
       }
     }
   }
 
   boardClick = (e) => {
     e.preventDefault()
-    const symbol = 'x'
+    if (this.state.turn !== this.state.username){
+      return
+    }
+    const symbol = this.state.symbol
     const index = parseInt(e.target.attributes.index.value)
     const board = this.state.board
     board[index].symbol = symbol
@@ -53,14 +67,16 @@ class App extends Component {
       username: this.state.username,
       board
     }))
-    // this.setState((state, props) => {
+  }
 
-    //   client.send(JSON.stringify({
-    //     type: 'contentchange',
-    //     count: state.counter + 1
-    //   }))
-    //   return {counter: state.counter + 1}
-    // })
+  updateUser = (user) => {
+    const currentUsers = this.state.currentUsers
+    currentUsers.push(user)
+    this.setState(state => ({username: user.username, symbol: user.symbol }))
+    client.send(JSON.stringify({
+      type: 'userevent',
+      user
+    }))
   }
 
   render() {
@@ -68,7 +84,8 @@ class App extends Component {
       <div className="App">
         <Header/>
         <main>
-          <Players/>
+          {!this.state.username  && <SignIn updateUser={this.updateUser}/>}
+          <Players players={this.state.currentUsers}/>
           <Game boardClick={this.boardClick} {...this.state}/>
         </main>
         <Footer/>
