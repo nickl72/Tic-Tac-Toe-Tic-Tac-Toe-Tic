@@ -23,12 +23,14 @@ let editorContent = null;
 // User activity history.
 let userActivity = [];
 
+let count = 0;
+
 
 
 const sendMessage = (json) => {
   // We are sending the current data to all connected clients
-  console.log(users)
-  console.log(Object.keys(users).length)
+  console.log(json)
+//   console.log(Object.keys(users).length)
   Object.keys(clients).map((client) => {
     clients[client].sendUTF(json);
   });
@@ -41,23 +43,24 @@ const typesDef = {
 
 wsServer.on('request', function(request) {
   var userID = getUniqueID();
+  console.log(count)
   console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
   // You can rewrite this part of the code to accept only the requests from allowed origin
   const connection = request.accept(null, request.origin);
   clients[userID] = connection;
   console.log('connected: ' + userID + ' in ' + Object.getOwnPropertyNames(clients));
+
+  // sends current state when new client connects
+  sendMessage(JSON.stringify({count}))
+
+  // recieves message, processes and sends update
   connection.on('message', function(message) {
+      console.log(message)
     if (message.type === 'utf8') {
       const dataFromClient = JSON.parse(message.utf8Data);
-      const json = { type: dataFromClient.type };
-      if (dataFromClient.type === typesDef.USER_EVENT) {
-        users[userID] = dataFromClient;
-        userActivity.push(`${dataFromClient.username} joined to edit the document`);
-        json.data = { editorContent, users, userActivity };
-      } else if (dataFromClient.type === typesDef.CONTENT_CHANGE) {
-        editorContent = dataFromClient.content;
-        json.data = { editorContent, userActivity };
-      }
+      count = dataFromClient.count
+      console.log('dataFromClient: ', dataFromClient)
+      const json = dataFromClient;
       sendMessage(JSON.stringify(json));
     }
   });
@@ -68,10 +71,11 @@ wsServer.on('request', function(request) {
     if (users[userID]) {
       userActivity.push(`${users[userID].username} left the document`);
       json.data = { users, userActivity };
-      delete clients[userID];
       delete users[userID];
       sendMessage(JSON.stringify(json));
     }
+    delete clients[userID];
+    console.log(Object.keys(clients))
   });
 });
 console.log('server listening on port 8000')
