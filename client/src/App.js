@@ -23,25 +23,47 @@ class App extends Component {
   }
 
   componentWillMount() {
+    const board = []
+    for (let row= 1; row<= 25; row++) {
+      for (let col = 1; col<=25; col++) {
+          board.push({row, col, username: null, symbol: ''})
+      }
+    }
+    this.setState((state, props) => ({board}))
     client.onopen = () => {
       console.log('WebSocket Client Connected');
     };
     client.onmessage = (message) => {
-      // console.log(message)
       const data = JSON.parse(message.data)
-      this.setState((state, props) => ({counter: data.count})
-      )
+      console.log(data)
+      if (data.board) {
+        // const board = this.state.board
+        // board[data.index].symbol = data.symbol
+        this.setState((state, props) => ({board: data.board})
+        )
+      }
     }
   }
 
-  click = () => {
-    this.setState((state, props) => {
-      client.send(JSON.stringify({
-        type: 'contentchange',
-        count: state.counter + 1
-      }))
-      return {counter: state.counter + 1}
-    })
+  boardClick = (e) => {
+    e.preventDefault()
+    const symbol = 'x'
+    const index = parseInt(e.target.attributes.index.value)
+    const board = this.state.board
+    board[index].symbol = symbol
+    client.send(JSON.stringify({
+      type: 'contentchange',
+      username: this.state.username,
+      board
+    }))
+    // this.setState((state, props) => {
+
+    //   client.send(JSON.stringify({
+    //     type: 'contentchange',
+    //     count: state.counter + 1
+    //   }))
+    //   return {counter: state.counter + 1}
+    // })
   }
 
   render() {
@@ -50,7 +72,7 @@ class App extends Component {
         <Header/>
         <main>
           <Players/>
-          <Game/>
+          <Game boardClick={this.boardClick} {...this.state}/>
         </main>
         <Footer/>
       </div>

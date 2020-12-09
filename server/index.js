@@ -23,13 +23,12 @@ let editorContent = null;
 // User activity history.
 let userActivity = [];
 
-let count = 0;
+let board = [];
 
 
 
 const sendMessage = (json) => {
   // We are sending the current data to all connected clients
-  console.log(json)
 //   console.log(Object.keys(users).length)
   Object.keys(clients).map((client) => {
     clients[client].sendUTF(json);
@@ -43,7 +42,6 @@ const typesDef = {
 
 wsServer.on('request', function(request) {
   var userID = getUniqueID();
-  console.log(count)
   console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
   // You can rewrite this part of the code to accept only the requests from allowed origin
   const connection = request.accept(null, request.origin);
@@ -51,15 +49,16 @@ wsServer.on('request', function(request) {
   console.log('connected: ' + userID + ' in ' + Object.getOwnPropertyNames(clients));
 
   // sends current state when new client connects
-  sendMessage(JSON.stringify({count}))
+  if (board[0]) {
+      sendMessage(JSON.stringify({board}))
+  }
 
   // recieves message, processes and sends update
   connection.on('message', function(message) {
-      console.log(message)
     if (message.type === 'utf8') {
       const dataFromClient = JSON.parse(message.utf8Data);
-      count = dataFromClient.count
-      console.log('dataFromClient: ', dataFromClient)
+      board = dataFromClient.board
+    //   console.log('dataFromClient: ', dataFromClient)
       const json = dataFromClient;
       sendMessage(JSON.stringify(json));
     }

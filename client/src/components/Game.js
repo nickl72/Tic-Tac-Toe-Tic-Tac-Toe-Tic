@@ -1,19 +1,19 @@
 import React from 'react';
 
-const Game = () => {
+const Game = (props) => {
+    console.log(props)
     const board = []
-    for (let row= 1; row<= 25; row++) {
-        for (let col = 1; col<=25; col++) {
-            board.push({row, col})
-        }
-    }
+    
     return (
         <div className='game-board'>
-            {board.map((item, key) => (
+            {props.board.map((item, key) => (
                 <div 
-                    className={`row-${item.row} col-${item.col}`} key={key} 
-                    onClick={(e) => {e.target.innerText = 'x'}} 
+                    className={`row-${item.row} col-${item.col}`} 
+                    key={key} 
+                    index={key}
+                    onClick={props.boardClick} 
                 >
+                {props.board[key].symbol}
                 </div>))}
         </div>
     )
