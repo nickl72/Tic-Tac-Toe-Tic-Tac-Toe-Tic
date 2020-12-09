@@ -21,7 +21,8 @@ class App extends Component {
       symbol: null,
       board: [],
       counter: 0,
-      turn: null
+      turn: null,
+      winner: null
     };
   }
 
@@ -61,7 +62,8 @@ class App extends Component {
     client.send(JSON.stringify({
       type: 'contentchange',
       username: this.state.username,
-      board
+      board,
+      index
     }))
   }
 
@@ -85,6 +87,7 @@ class App extends Component {
         <Header/>
         <main>
           {!this.state.username  && <SignIn updateUser={this.updateUser}/>}
+          {this.state.winner && <h1>{this.state.winner} WINS</h1>}
           <Players players={this.state.currentUsers}/>
           {this.state.turn ? 
             <Game boardClick={this.boardClick} {...this.state}/>

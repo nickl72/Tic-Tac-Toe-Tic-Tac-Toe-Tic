@@ -27,6 +27,7 @@ let board = [];
 
 let turn = null;
 let turnID = null;
+let winner = null;
 const resetBoard = () => {
     for (let row = 1; row <= 25; row++) {
         for (let col = 1; col <= 25; col++) {
@@ -35,6 +36,83 @@ const resetBoard = () => {
       }
 }
 resetBoard()
+
+const checkForWin = (index) => {
+    const symbol = board[index].symbol
+    const lengths = [
+        [{length: 0, resume: true},{length: 0, resume: true},{length: 0, resume: true}],
+        [{length: 0, resume: true},{length: 0, resume: true},{length: 0, resume: true}],
+        [{length: 0, resume: true},{length: 0, resume: true},{length: 0, resume: true}]
+    ];
+    let up = index
+    let down = index
+    let right = index
+    let left = index
+    for (let i = 0; i < 6; i++) {
+        up = up - 25;
+        down = down + 25;
+        right = right + 1;
+        left = left - 1;
+        let u = false, d = false, l = false, r = false
+        if (up > 0) {
+            u = true
+            if (lengths[0][1].resume && board[up].symbol === symbol) {
+                lengths[0][1].length ++
+            } else {
+                lengths[0][1].resume = false
+            }
+        }
+        if (down <= 25**2) {
+            d = true
+            if (lengths[2][1].resume && board[down].symbol === symbol) {
+                lengths[2][1].length ++
+            } else {
+                lengths[2][1].resume = false
+            }
+        }
+        if (left >= 0) {
+            l = true
+            if (lengths[1][0].resume && left%25 !==24 && board[left].symbol === symbol) {
+                lengths[1][0].length ++
+            } else {
+                lengths[1][0].resume = false
+            }
+        }
+        if (right < 625) {
+            r = true
+            if (lengths[1][2].resume && right%25 !==0 && board[right].symbol === symbol) {
+                lengths[1][2].length ++
+            } else {
+                lengths[1][2].resume = false
+            }
+        }
+        if (u && l && lengths[0][0].resume && board[up-1-i].symbol === symbol) {
+            lengths[0][0].length ++
+        } else {
+            lengths[0][0].resume = false
+        }
+        if (u && r && lengths[0][2].resume && board[up+1+i].symbol === symbol) {
+            lengths[0][2].length ++
+        } else {
+            lengths[0][2].resume = false
+        }
+        if (d && l && lengths[2][0].resume && board[down-1-i].symbol === symbol) {
+            lengths[2][0].length ++
+        } else {
+            lengths[2][0].resume = false
+        }
+        if (d && r && lengths[2][2].resume && board[down+1+i].symbol === symbol) {
+            lengths[2][2].length ++
+        } else {
+            lengths[2][2].resume = false
+        }
+        
+    }
+    if (lengths[0][0].length + lengths[2][2].length >= 6 || lengths[0][1].length + lengths[2][1].length >= 6 || lengths[0][2].length + lengths[2][0].length >=6 || lengths[1][0].length + lengths[1][2].length >= 6) {
+        winner = symbol
+    }
+
+}
 
 
 
@@ -45,6 +123,7 @@ const sendMessage = (data) => {
         users,
         board,
         turn,
+        winner,
         data
     })
   Object.keys(clients).map((client) => {
@@ -98,8 +177,9 @@ wsServer.on('request', function(request) {
               turnID.ID = 0;
           }
           turn = users[userKeys[turnID.ID]]
+          checkForWin(dataFromClient.index)
       }
-      console.log('dataFromClient: ', dataFromClient)
+    //   console.log('dataFromClient: ', dataFromClient)
       sendMessage('');
     }
   });
