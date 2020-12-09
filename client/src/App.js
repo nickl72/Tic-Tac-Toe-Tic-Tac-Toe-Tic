@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import { w3cwebsocket as W3CWebSocket} from 'websocket';
 import './App.css';
 
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Players from './components/Players';
+import Game from './components/Game'
+
+
 const client = new W3CWebSocket('ws://127.0.0.1:8000');
 
 
@@ -41,9 +47,12 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <button 
-          onClick={this.click}
-        >{this.state.counter}</button>
+        <Header/>
+        <main>
+          <Players/>
+          <Game/>
+        </main>
+        <Footer/>
       </div>
     );
   }
