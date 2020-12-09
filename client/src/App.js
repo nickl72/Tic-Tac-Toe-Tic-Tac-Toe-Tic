@@ -35,10 +35,7 @@ class App extends Component {
     };
     client.onmessage = (message) => {
       const data = JSON.parse(message.data)
-      console.log(data)
       if (data.board) {
-        // const board = this.state.board
-        // board[data.index].symbol = data.symbol
         this.setState((state, props) => ({board: data.board})
         )
       }

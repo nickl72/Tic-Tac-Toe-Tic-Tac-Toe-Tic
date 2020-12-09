@@ -74,7 +74,12 @@ wsServer.on('request', function(request) {
       sendMessage(JSON.stringify(json));
     }
     delete clients[userID];
+    console.log(Object.keys(clients).length)
     console.log(Object.keys(clients))
+
+    if (Object.keys(clients).length === 0) {
+        board = []
+    }
   });
 });
 console.log('server listening on port 8000')
