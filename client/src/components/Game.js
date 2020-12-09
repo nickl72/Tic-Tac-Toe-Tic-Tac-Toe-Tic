@@ -9,10 +9,12 @@ const Game = () => {
     }
     return (
         <div className='game-board'>
-            {board.map(item => {
-                return (<div>x</div>)
-            })}
-
+            {board.map((item, key) => (
+                <div 
+                    className={`row-${item.row} col-${item.col}`} key={key} 
+                    onClick={(e) => {e.target.innerText = 'x'}} 
+                >
+                </div>))}
         </div>
     )
 }
