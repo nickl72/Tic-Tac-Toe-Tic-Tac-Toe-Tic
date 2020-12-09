@@ -11,5 +11,15 @@
     <section class='game-board'>
     </section>
     <script rel='script' src='script/game.js'></script>
+    <form>
+        Number of Players: <input type="number" name="numPlayers" value='2'/>
+        Board Size: <input type="number" name="boardSize" value='25' />
+        <br/>
+        <% for (i = 0; i < 2; i++) { %>
+            Player <%=i+1%> Symbol: <input type="text" name="player<%=i+1%>Symbol" value='<%=i+1%>' />
+            Player <%=i+1%> Name: <input type="text" name="player<%=i+1%>Name" />
+            <br/>
+        <% } %>
+    </form>
 </body>
 </html>
