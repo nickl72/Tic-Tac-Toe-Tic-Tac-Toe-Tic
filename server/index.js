@@ -23,16 +23,32 @@ let editorContent = null;
 // User activity history.
 let userActivity = [];
 
-let count = 0;
+let board = [];
+
+let turn = null;
+let turnID = null;
+const resetBoard = () => {
+    for (let row = 1; row <= 25; row++) {
+        for (let col = 1; col <= 25; col++) {
+            board.push({row, col, username: null, symbol: ''})
+        }
+      }
+}
+resetBoard()
 
 
 
-const sendMessage = (json) => {
+const sendMessage = (data) => {
   // We are sending the current data to all connected clients
-  console.log(json)
 //   console.log(Object.keys(users).length)
+    const sendToClient = JSON.stringify({
+        users,
+        board,
+        turn,
+        data
+    })
   Object.keys(clients).map((client) => {
-    clients[client].sendUTF(json);
+    clients[client].sendUTF(sendToClient);
   });
 }
 
@@ -43,7 +59,6 @@ const typesDef = {
 
 wsServer.on('request', function(request) {
   var userID = getUniqueID();
-  console.log(count)
   console.log((new Date()) + ' Recieved a new connection from origin ' + request.origin + '.');
   // You can rewrite this part of the code to accept only the requests from allowed origin
   const connection = request.accept(null, request.origin);
@@ -51,17 +66,41 @@ wsServer.on('request', function(request) {
   console.log('connected: ' + userID + ' in ' + Object.getOwnPropertyNames(clients));
 
   // sends current state when new client connects
-  sendMessage(JSON.stringify({count}))
+  if (board) {
+    if (board[0]) {
+        sendMessage('')
+  }}
 
   // recieves message, processes and sends update
   connection.on('message', function(message) {
-      console.log(message)
+    //   console.log(message)
+      const userKeys = Object.keys(users)
     if (message.type === 'utf8') {
       const dataFromClient = JSON.parse(message.utf8Data);
-      count = dataFromClient.count
+      // Starts a new game
+      if (dataFromClient.startGame) {
+        turnID = {
+            ID: Math.floor(Math.random() * userKeys.length), 
+            total: userKeys.length
+        }
+        turn = users[userKeys[turnID.ID]]
+        resetBoard()        
+      }
+      // adds a new user
+      if (dataFromClient.user) {
+          users[userID] = dataFromClient.user
+      }
+      // updates board
+      if (dataFromClient.board) {
+          board = dataFromClient.board
+          turnID.ID += 1;
+          if (turnID.ID === turnID.total) {
+              turnID.ID = 0;
+          }
+          turn = users[userKeys[turnID.ID]]
+      }
       console.log('dataFromClient: ', dataFromClient)
-      const json = dataFromClient;
-      sendMessage(JSON.stringify(json));
+      sendMessage('');
     }
   });
   // user disconnected
@@ -72,10 +111,15 @@ wsServer.on('request', function(request) {
       userActivity.push(`${users[userID].username} left the document`);
       json.data = { users, userActivity };
       delete users[userID];
-      sendMessage(JSON.stringify(json));
+      sendMessage('');
     }
     delete clients[userID];
+    console.log(Object.keys(clients).length)
     console.log(Object.keys(clients))
+
+    if (Object.keys(clients).length === 0) {
+        resetBoard()
+    }
   });
 });
 console.log('server listening on port 8000')

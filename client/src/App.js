@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import { w3cwebsocket as W3CWebSocket} from 'websocket';
 import './App.css';
 
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Players from './components/Players';
+import Game from './components/Game';
+import SignIn from './components/SignIn';
+
+
 const client = new W3CWebSocket('ws://127.0.0.1:8000');
 
 
@@ -11,8 +18,10 @@ class App extends Component {
     this.state = {
       currentUsers: [],
       username: null,
+      symbol: null,
       board: [],
-      counter: 0
+      counter: 0,
+      turn: null
     };
   }
 
@@ -21,29 +30,71 @@ class App extends Component {
       console.log('WebSocket Client Connected');
     };
     client.onmessage = (message) => {
-      // console.log(message)
       const data = JSON.parse(message.data)
-      this.setState((state, props) => ({counter: data.count})
-      )
+      if (data.board) {
+        this.setState((state, props) => ({board: data.board, turn: data.turn})
+        )
+      }
+      if (data.turn) {
+        this.setState((state,props) => ({turn: data.turn.username}))
+      }
+      console.log(data)
+      if (data.users) {
+        const currentUsers = []
+        Object.keys(data.users).map(key => {
+          currentUsers.push(data.users[key])
+        })
+        this.setState((state,props) => ({currentUsers}))
+      }
     }
   }
 
-  click = () => {
-    this.setState((state, props) => {
-      client.send(JSON.stringify({
-        type: 'contentchange',
-        count: state.counter + 1
-      }))
-      return {counter: state.counter + 1}
-    })
+  boardClick = (e) => {
+    e.preventDefault()
+    if (this.state.turn !== this.state.username){
+      return
+    }
+    const symbol = this.state.symbol
+    const index = parseInt(e.target.attributes.index.value)
+    const board = this.state.board
+    board[index].symbol = symbol
+    client.send(JSON.stringify({
+      type: 'contentchange',
+      username: this.state.username,
+      board
+    }))
   }
 
+  updateUser = (user) => {
+    const currentUsers = this.state.currentUsers
+    currentUsers.push(user)
+    this.setState(state => ({username: user.username, symbol: user.symbol }))
+    client.send(JSON.stringify({
+      type: 'userevent',
+      user
+    }))
+  }
+
+  startGame = (e) => {
+    e.preventDefault()
+    client.send(JSON.stringify({startGame: true}))
+  }
   render() {
     return (
       <div className="App">
-        <button 
-          onClick={this.click}
-        >{this.state.counter}</button>
+        <Header/>
+        <main>
+          {!this.state.username  && <SignIn updateUser={this.updateUser}/>}
+          <Players players={this.state.currentUsers}/>
+          {this.state.turn ? 
+            <Game boardClick={this.boardClick} {...this.state}/>
+            :
+            <div>
+              <button onClick={this.startGame}>Start Game</button>
+            </div>
+          }
+        </main>
+        <Footer/>
       </div>
     );
   }
