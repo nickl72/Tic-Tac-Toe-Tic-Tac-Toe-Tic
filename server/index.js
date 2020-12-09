@@ -24,6 +24,7 @@ let editorContent = null;
 let userActivity = [];
 
 let board = [];
+let turn = null;
 
 
 
@@ -49,16 +50,25 @@ wsServer.on('request', function(request) {
   console.log('connected: ' + userID + ' in ' + Object.getOwnPropertyNames(clients));
 
   // sends current state when new client connects
-  if (board[0]) {
-      sendMessage(JSON.stringify({board}))
-  }
+  if (board) {
+    if (board[0]) {
+        sendMessage(JSON.stringify({board}))
+  }}
 
   // recieves message, processes and sends update
   connection.on('message', function(message) {
+      console.log(users[userID])
     if (message.type === 'utf8') {
       const dataFromClient = JSON.parse(message.utf8Data);
+
+      if (dataFromClient.user) {
+          users[userID] = dataFromClient.user
+          
+          sendMessage(JSON.stringify({users}))
+      }
+
       board = dataFromClient.board
-    //   console.log('dataFromClient: ', dataFromClient)
+      console.log('dataFromClient: ', dataFromClient)
       const json = dataFromClient;
       sendMessage(JSON.stringify(json));
     }
