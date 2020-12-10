@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import { CompactPicker } from 'react-color';
+import Picker from 'emoji-picker-react';
 
 
 const Div = styled.div`
@@ -16,8 +17,8 @@ const Div = styled.div`
     justify-content: center;
     form {
         background: white;
-        height: 30vh;
-        width: 30vw;
+        min-height: 30vh;
+        min-width: 30vw;
         padding: 5vw;
         display: flex;
         flex-direction: column;
@@ -27,9 +28,13 @@ const Div = styled.div`
 `
 
 const SignIn = (props) => {
-    const [color, setColor] = useState('')
+    const [color, setColor] = useState('white')
+    const [chosenEmoji, setChosenEmoji] = useState(null);
     const setUsername = (e) => {
         e.preventDefault()
+        if (!e.target.symbol.value || !e.target.username.value) {
+            return
+        }
         const user = {}
         user.username = e.target.username.value
         user.symbol = e.target.symbol.value
@@ -38,15 +43,22 @@ const SignIn = (props) => {
     }
     const handleColorChange = ({hex}) => setColor(hex)
     
+    const onEmojiClick = (e, emoji) => {
+        console.log(emoji.emoji)
+        setChosenEmoji(emoji.emoji)
+
+    }
+
     return (
         <Div>
             <form onSubmit={setUsername}>
                 <input type='text' name='username' placeholder='username' />
-                <input type='text' name='symbol' placeholder='symbol' />
+                <input type='text' name='symbol' placeholder='symbol' value={chosenEmoji}/>
                 <CompactPicker 
                     color={color}
                     onChangeComplete={ handleColorChange } 
                 />
+                <Picker onEmojiClick={onEmojiClick}/>
                 <input type='submit' value='submit'/>
             </form>
         </Div>

@@ -20,7 +20,7 @@ class App extends Component {
       username: null,
       symbol: null,
       board: [],
-      turn: null,
+      turn: false,
       winner: null,
       color: 'white'
     };
@@ -44,6 +44,7 @@ class App extends Component {
         const currentUsers = []
         Object.keys(data.users).map(key => {
           currentUsers.push(data.users[key])
+          return ''
         })
         this.setState((state,props) => ({currentUsers}))
       }
@@ -82,14 +83,13 @@ class App extends Component {
 
   startGame = (e) => {
     e.preventDefault()
-    console.log('hi')
     client.send(JSON.stringify({startGame: true}))
   }
 
   render() {
     return (
       <div className="App">
-        <Header/>
+        <Header turn={this.state.turn}/>
         <main>
           {!this.state.username  && <SignIn updateUser={this.updateUser}/>}
           <Players players={this.state.currentUsers}/>

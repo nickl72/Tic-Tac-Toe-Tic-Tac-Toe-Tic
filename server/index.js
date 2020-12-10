@@ -51,13 +51,15 @@ const checkForWin = (data) => {
     let right = index
     let left = index
     for (let i = 0; i < 6; i++) {
+        console.log(lengths)
         up = up - 25;
         down = down + 25;
         right = right + 1;
         left = left - 1;
         let u = false, d = false, l = false, r = false
+        console.log(u)
         if (up > 0) {
-            u = true
+            if (up -1-i >= 0){u = true}
             if (lengths[0][1].resume && board[up].symbol === symbol) {
                 lengths[0][1].length ++
             } else {
@@ -65,7 +67,7 @@ const checkForWin = (data) => {
             }
         }
         if (down <= 25**2) {
-            d = true
+            if (down+1+i < 625){d = true}
             if (lengths[2][1].resume && board[down].symbol === symbol) {
                 lengths[2][1].length ++
             } else {
@@ -88,6 +90,7 @@ const checkForWin = (data) => {
                 lengths[1][2].resume = false
             }
         }
+        console.log(up)
         if (u && l && lengths[0][0].resume && board[up-1-i].symbol === symbol) {
             lengths[0][0].length ++
         } else {
