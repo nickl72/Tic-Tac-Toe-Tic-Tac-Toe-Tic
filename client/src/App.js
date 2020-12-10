@@ -20,9 +20,9 @@ class App extends Component {
       username: null,
       symbol: null,
       board: [],
-      counter: 0,
       turn: null,
-      winner: null
+      winner: null,
+      color: 'white'
     };
   }
 
@@ -61,6 +61,7 @@ class App extends Component {
     const index = parseInt(e.target.attributes.index.value)
     const board = this.state.board
     board[index].symbol = symbol
+    board[index].color = this.state.color
     client.send(JSON.stringify({
       type: 'contentchange',
       username: this.state.username,
@@ -72,7 +73,7 @@ class App extends Component {
   updateUser = (user) => {
     const currentUsers = this.state.currentUsers
     currentUsers.push(user)
-    this.setState(state => ({username: user.username, symbol: user.symbol }))
+    this.setState(state => ({username: user.username, symbol: user.symbol, color: user.color }))
     client.send(JSON.stringify({
       type: 'userevent',
       user
@@ -100,7 +101,7 @@ class App extends Component {
             </div>
           }
         </main>
-        <Footer/>
+        <Footer restartGame={this.startGame}/>
       </div>
     );
   }

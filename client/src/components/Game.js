@@ -17,7 +17,8 @@ const Game = (props) => {
                         className={`row-${item.row} col-${item.col}`} 
                         key={key} 
                         index={key}
-                        onClick={props.boardClick} 
+                        onClick={props.boardClick}
+                        style={{background: item.color}} 
                     >
                     {props.board[key].symbol}
                     </div>))}

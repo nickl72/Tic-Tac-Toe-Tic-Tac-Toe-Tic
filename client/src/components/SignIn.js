@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
+import { CompactPicker } from 'react-color';
+
 
 const Div = styled.div`
     position: absolute;
@@ -25,20 +27,26 @@ const Div = styled.div`
 `
 
 const SignIn = (props) => {
-
+    const [color, setColor] = useState('')
     const setUsername = (e) => {
         e.preventDefault()
         const user = {}
         user.username = e.target.username.value
         user.symbol = e.target.symbol.value
+        user.color = color
         props.updateUser(user)
     }
+    const handleColorChange = ({hex}) => setColor(hex)
     
     return (
         <Div>
             <form onSubmit={setUsername}>
                 <input type='text' name='username' placeholder='username' />
                 <input type='text' name='symbol' placeholder='symbol' />
+                <CompactPicker 
+                    color={color}
+                    onChangeComplete={ handleColorChange } 
+                />
                 <input type='submit' value='submit'/>
             </form>
         </Div>
