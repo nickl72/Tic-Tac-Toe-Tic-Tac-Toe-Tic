@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Footer = () => {
+const Footer = (props) => {
     return (
         <footer>
-            <p>Created by Nick LaPointe</p>
+            <p onClick={props.restartGame}>Created by Nick LaPointe</p>
         </footer>
     )
 }

@@ -20,8 +20,9 @@ class App extends Component {
       username: null,
       symbol: null,
       board: [],
-      counter: 0,
-      turn: null
+      turn: false,
+      winner: null,
+      color: 'white'
     };
   }
 
@@ -38,37 +39,41 @@ class App extends Component {
       if (data.turn) {
         this.setState((state,props) => ({turn: data.turn.username}))
       }
-      console.log(data)
       if (data.users) {
         const currentUsers = []
         Object.keys(data.users).map(key => {
           currentUsers.push(data.users[key])
+          return ''
         })
         this.setState((state,props) => ({currentUsers}))
       }
+      this.setState((state, props) => ({winner: data.winner}))
+      
     }
   }
 
   boardClick = (e) => {
     e.preventDefault()
-    if (this.state.turn !== this.state.username){
-      return
-    }
     const symbol = this.state.symbol
     const index = parseInt(e.target.attributes.index.value)
     const board = this.state.board
+    if (this.state.turn !== this.state.username || board[index].symbol ){
+      return
+    }
     board[index].symbol = symbol
+    board[index].color = this.state.color
     client.send(JSON.stringify({
       type: 'contentchange',
       username: this.state.username,
-      board
+      board,
+      index
     }))
   }
 
   updateUser = (user) => {
     const currentUsers = this.state.currentUsers
     currentUsers.push(user)
-    this.setState(state => ({username: user.username, symbol: user.symbol }))
+    this.setState(state => ({username: user.username, symbol: user.symbol, color: user.color }))
     client.send(JSON.stringify({
       type: 'userevent',
       user
@@ -79,22 +84,23 @@ class App extends Component {
     e.preventDefault()
     client.send(JSON.stringify({startGame: true}))
   }
+
   render() {
     return (
       <div className="App">
-        <Header/>
+        <Header turn={this.state.turn}/>
         <main>
           {!this.state.username  && <SignIn updateUser={this.updateUser}/>}
           <Players players={this.state.currentUsers}/>
           {this.state.turn ? 
-            <Game boardClick={this.boardClick} {...this.state}/>
+            <Game boardClick={this.boardClick} resetGame={this.startGame} {...this.state}/>
             :
             <div>
               <button onClick={this.startGame}>Start Game</button>
             </div>
           }
         </main>
-        <Footer/>
+        <Footer restartGame={this.startGame}/>
       </div>
     );
   }
