@@ -47,6 +47,8 @@ class App extends Component {
         })
         this.setState((state,props) => ({currentUsers}))
       }
+      this.setState((state, props) => ({winner: data.winner}))
+      
     }
   }
 
@@ -79,18 +81,19 @@ class App extends Component {
 
   startGame = (e) => {
     e.preventDefault()
+    console.log('hi')
     client.send(JSON.stringify({startGame: true}))
   }
+
   render() {
     return (
       <div className="App">
         <Header/>
         <main>
           {!this.state.username  && <SignIn updateUser={this.updateUser}/>}
-          {this.state.winner && <h1>{this.state.winner} WINS</h1>}
           <Players players={this.state.currentUsers}/>
           {this.state.turn ? 
-            <Game boardClick={this.boardClick} {...this.state}/>
+            <Game boardClick={this.boardClick} resetGame={this.startGame} {...this.state}/>
             :
             <div>
               <button onClick={this.startGame}>Start Game</button>

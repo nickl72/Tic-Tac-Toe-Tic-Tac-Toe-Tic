@@ -29,6 +29,7 @@ let turn = null;
 let turnID = null;
 let winner = null;
 const resetBoard = () => {
+    board = [];
     for (let row = 1; row <= 25; row++) {
         for (let col = 1; col <= 25; col++) {
             board.push({row, col, username: null, symbol: ''})
@@ -37,7 +38,8 @@ const resetBoard = () => {
 }
 resetBoard()
 
-const checkForWin = (index) => {
+const checkForWin = (data) => {
+    const index = data.index
     const symbol = board[index].symbol
     const lengths = [
         [{length: 0, resume: true},{length: 0, resume: true},{length: 0, resume: true}],
@@ -109,11 +111,10 @@ const checkForWin = (index) => {
         
     }
     if (lengths[0][0].length + lengths[2][2].length >= 6 || lengths[0][1].length + lengths[2][1].length >= 6 || lengths[0][2].length + lengths[2][0].length >=6 || lengths[1][0].length + lengths[1][2].length >= 6) {
-        winner = symbol
+        winner = data.username
     }
 
 }
-
 
 
 const sendMessage = (data) => {
@@ -158,6 +159,7 @@ wsServer.on('request', function(request) {
       const dataFromClient = JSON.parse(message.utf8Data);
       // Starts a new game
       if (dataFromClient.startGame) {
+        winner = null;
         turnID = {
             ID: Math.floor(Math.random() * userKeys.length), 
             total: userKeys.length
@@ -177,7 +179,7 @@ wsServer.on('request', function(request) {
               turnID.ID = 0;
           }
           turn = users[userKeys[turnID.ID]]
-          checkForWin(dataFromClient.index)
+          checkForWin(dataFromClient)
       }
     //   console.log('dataFromClient: ', dataFromClient)
       sendMessage('');
