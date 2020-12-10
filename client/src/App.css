@@ -8,16 +8,16 @@
 main {
   flex-grow: 1;
   display: flex;
+  /* align-items: stretch; */
+  justify-content: space-around;
   min-width: 100vw;
 }
 
 .game-container {
   margin: 10px;
-  flex-grow: 1;
 }
 .game-board {
-  margin: 10px;
-  flex-grow: 1;
+  /* margin: 10px; */
   display: grid;
   grid-template-columns: repeat(25, 1fr);
   grid-template-rows: repeat(25, 1fr);
@@ -26,9 +26,24 @@ main {
   border: 1px solid black;
   padding: 0;
   margin: 0;
-  min-height: 1.25em;
-  min-width: 1.25em;
+  height: 2em;
+  width: 2em;
 }
 .game-board div:hover {
   background: rgba(125,12,54,.3);
+}
+.players {
+  background: purple;
+  flex-grow: 1;
+  padding: 0;
+  margin: 0;
+}
+footer header {
+  margin: 0;
+
+}
+.side {
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
 }

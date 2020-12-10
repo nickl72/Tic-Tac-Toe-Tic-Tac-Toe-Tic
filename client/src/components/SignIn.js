@@ -5,7 +5,8 @@ import Picker from 'emoji-picker-react';
 
 
 const Div = styled.div`
-    position: absolute;
+    position: fixed;
+    margin: 0;
     left: 0;
     top: 0;
     height: 100vh;
@@ -29,7 +30,8 @@ const Div = styled.div`
 
 const SignIn = (props) => {
     const [color, setColor] = useState('white')
-    const [chosenEmoji, setChosenEmoji] = useState(null);
+    const [chosenEmoji, setChosenEmoji] = useState('');
+    const [username, setName] = useState('');
     const setUsername = (e) => {
         e.preventDefault()
         if (!e.target.symbol.value || !e.target.username.value) {
@@ -44,6 +46,7 @@ const SignIn = (props) => {
     const handleColorChange = ({hex}) => setColor(hex)
     
     const onEmojiClick = (e, emoji) => {
+        console.log(emoji)
         setChosenEmoji(emoji.emoji)
 
     }
@@ -51,8 +54,8 @@ const SignIn = (props) => {
     return (
         <Div>
             <form onSubmit={setUsername}>
-                <input type='text' name='username' placeholder='username' />
-                <input type='text' name='symbol' placeholder='symbol' value={chosenEmoji}/>
+                <input type='text' name='username' placeholder='username' value={username} onChange={(e) => {setName(e.target.value)}}/>
+                <input type='text' name='symbol' placeholder='symbol' value={chosenEmoji} onChange={(e) => {setChosenEmoji(e.target.value)}} maxLength='1'/>
                 <CompactPicker 
                     color={color}
                     onChangeComplete={ handleColorChange } 

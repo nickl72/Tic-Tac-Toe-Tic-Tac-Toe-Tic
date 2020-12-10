@@ -26,7 +26,7 @@ class App extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     client.onopen = () => {
       console.log('WebSocket Client Connected');
     };
@@ -68,6 +68,8 @@ class App extends Component {
       board,
       index
     }))
+    this.setState((state, props) => ({turn: ' '}))
+    
   }
 
   updateUser = (user) => {
@@ -99,6 +101,7 @@ class App extends Component {
               <button onClick={this.startGame}>Start Game</button>
             </div>
           }
+          <div className='side'/>
         </main>
         <Footer restartGame={this.startGame}/>
       </div>
