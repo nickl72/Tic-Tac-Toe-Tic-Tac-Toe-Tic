@@ -33,7 +33,6 @@ main {
   background: rgba(125,12,54,.3);
 }
 .players {
-  background: purple;
   flex-grow: 1;
   padding: 0;
   margin: 0;
