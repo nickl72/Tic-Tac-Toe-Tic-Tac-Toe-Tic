@@ -9,7 +9,7 @@ import Game from './components/Game';
 import SignIn from './components/SignIn';
 
 
-const client = new W3CWebSocket('ws://127.0.0.1:8000');
+const client = new W3CWebSocket('ws://nicktactoe.herokuapp.com/');
 
 
 class App extends Component {

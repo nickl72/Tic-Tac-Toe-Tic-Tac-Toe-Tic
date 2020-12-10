@@ -1,4 +1,5 @@
-const webSocketsServerPort = 8000;
+require('dotenv').config()
+const webSocketsServerPort = process.env.PORT;
 const webSocketServer = require('websocket').server;
 const http = require('http');
 // Spinning the http server and the websocket server.
@@ -202,4 +203,4 @@ wsServer.on('request', function(request) {
     }
   });
 });
-console.log('server listening on port 8000')
+console.log(`server listening on port ${process.env.PORT}`)
