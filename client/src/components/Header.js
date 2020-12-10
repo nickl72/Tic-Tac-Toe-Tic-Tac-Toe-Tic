@@ -1,7 +1,6 @@
 import React from 'react';
 
 const Header = (props) => {
-console.log(props.turn)
     return (
         <header>
             <h1>Tic-Tac-Toe-Tic-Tac-Toe-Tic</h1>

@@ -7,7 +7,6 @@ const Div = styled.div`
 `
 
 const Game = (props) => {
-    console.log(props)
     return (
         <div className='game-container'>
             {props.winner && <Winner resetGame={props.resetGame} winner={props.winner} />}

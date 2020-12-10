@@ -44,7 +44,6 @@ const SignIn = (props) => {
     const handleColorChange = ({hex}) => setColor(hex)
     
     const onEmojiClick = (e, emoji) => {
-        console.log(emoji.emoji)
         setChosenEmoji(emoji.emoji)
 
     }

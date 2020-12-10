@@ -39,7 +39,6 @@ class App extends Component {
       if (data.turn) {
         this.setState((state,props) => ({turn: data.turn.username}))
       }
-      console.log(data)
       if (data.users) {
         const currentUsers = []
         Object.keys(data.users).map(key => {
@@ -55,12 +54,12 @@ class App extends Component {
 
   boardClick = (e) => {
     e.preventDefault()
-    if (this.state.turn !== this.state.username){
-      return
-    }
     const symbol = this.state.symbol
     const index = parseInt(e.target.attributes.index.value)
     const board = this.state.board
+    if (this.state.turn !== this.state.username || board[index].symbol ){
+      return
+    }
     board[index].symbol = symbol
     board[index].color = this.state.color
     client.send(JSON.stringify({

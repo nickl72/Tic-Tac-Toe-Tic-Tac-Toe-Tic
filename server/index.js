@@ -51,13 +51,11 @@ const checkForWin = (data) => {
     let right = index
     let left = index
     for (let i = 0; i < 6; i++) {
-        console.log(lengths)
         up = up - 25;
         down = down + 25;
         right = right + 1;
         left = left - 1;
         let u = false, d = false, l = false, r = false
-        console.log(u)
         if (up > 0) {
             if (up -1-i >= 0){u = true}
             if (lengths[0][1].resume && board[up].symbol === symbol) {
@@ -90,7 +88,6 @@ const checkForWin = (data) => {
                 lengths[1][2].resume = false
             }
         }
-        console.log(up)
         if (u && l && lengths[0][0].resume && board[up-1-i].symbol === symbol) {
             lengths[0][0].length ++
         } else {
@@ -122,7 +119,6 @@ const checkForWin = (data) => {
 
 const sendMessage = (data) => {
   // We are sending the current data to all connected clients
-//   console.log(Object.keys(users).length)
     const sendToClient = JSON.stringify({
         users,
         board,
@@ -156,7 +152,6 @@ wsServer.on('request', function(request) {
 
   // recieves message, processes and sends update
   connection.on('message', function(message) {
-    //   console.log(message)
       const userKeys = Object.keys(users)
     if (message.type === 'utf8') {
       const dataFromClient = JSON.parse(message.utf8Data);
