@@ -25,6 +25,9 @@ main {
   margin: 0;
   height: 2em;
   width: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .game-board div:hover {
   background: rgba(125,12,54,.3);

@@ -19,7 +19,9 @@ const Game = (props) => {
                         onClick={props.boardClick}
                         style={{background: item.color}} 
                     >
-                    {props.board[key].symbol}
+                        <p>
+                            {props.board[key].symbol}
+                        </p>
                     </div>))}
             </Div>
         </div>
