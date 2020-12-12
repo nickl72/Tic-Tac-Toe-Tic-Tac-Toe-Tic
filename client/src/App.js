@@ -55,7 +55,6 @@ class App extends Component {
   boardClick = (e) => {
     e.preventDefault()
     const symbol = this.state.symbol
-    console.log(e.currentTarget.attributes)
     const index = parseInt(e.currentTarget.attributes.index.value)
     const board = this.state.board
     if (this.state.turn !== this.state.username || board[index].symbol ){
@@ -93,7 +92,7 @@ class App extends Component {
       <div className="App">
         <Header turn={this.state.turn}/>
         <main>
-          {!this.state.username  && <SignIn updateUser={this.updateUser}/>}
+          {!this.state.username  && <SignIn updateUser={this.updateUser} users={this.state.currentUsers}/>}
           <Players players={this.state.currentUsers}/>
           {this.state.turn ? 
             <Game boardClick={this.boardClick} resetGame={this.startGame} {...this.state}/>
