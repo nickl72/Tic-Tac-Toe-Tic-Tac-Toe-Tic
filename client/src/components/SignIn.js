@@ -44,9 +44,9 @@ const SignIn = (props) => {
 
     const setUsername = (e) => {
         e.preventDefault()
-        const symbolUnavailable = (props.users.length ? props.users.reduce((acc,user) => acc * (user.symbol === symbol), true) : false)
-        const usernameUnavailable = props.users.length ? props.users.reduce((acc,user) => acc * (user.username === e.target.username.value), true): false
-        console.log(usernameUnavailable, symbolUnavailable)
+        const symbolUnavailable = (props.users.length ? props.users.reduce((acc,user) => acc + (user.symbol === symbol), false) : false)
+        const usernameUnavailable = props.users.length ? props.users.reduce((acc,user) => acc + (user.username === e.target.username.value), false): false
+        // console.log( symbolAvailable)
         if (!symbol || !e.target.username.value || symbolUnavailable || usernameUnavailable) {
             return
         }
