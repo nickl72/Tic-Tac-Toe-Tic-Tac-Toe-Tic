@@ -55,7 +55,8 @@ class App extends Component {
   boardClick = (e) => {
     e.preventDefault()
     const symbol = this.state.symbol
-    const index = parseInt(e.target.attributes.index.value)
+    console.log(e.currentTarget.attributes)
+    const index = parseInt(e.currentTarget.attributes.index.value)
     const board = this.state.board
     if (this.state.turn !== this.state.username || board[index].symbol ){
       return
